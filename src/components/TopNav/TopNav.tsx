@@ -14,7 +14,7 @@ export const TopNav = () => {
     <TopNavWrapper>
       <HeaderStyled>
         <Typography>App</Typography>
-        <Switch onClick={switchTheme} initialState={darkMode} label="Tema" insignia={<span>🌙</span>} />
+        <Switch onClick={switchTheme} initialState={darkMode} label="Theme" insignia={<span>🌙</span>} />
       </HeaderStyled>
     </TopNavWrapper>
   );

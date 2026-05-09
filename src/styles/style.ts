@@ -49,7 +49,11 @@ export const darkTheme: ThemeType = {
   sizes: { ...sizes },
 };
 
-export const FlexWrapper = styled.div<FlexWrapperProps>(
+const flexWrapperProps = new Set(["flexWrap", "alignItems", "justifyContent", "flexDirection", "gap", "flex"]);
+
+export const FlexWrapper = styled.div.withConfig({
+  shouldForwardProp: (prop) => !flexWrapperProps.has(prop),
+})<FlexWrapperProps>(
   ({ theme, flexWrap, alignItems = "center", justifyContent, flexDirection, gap, flex }) => ({
     display: "flex",
     alignItems,
