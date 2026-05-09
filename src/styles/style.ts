@@ -1,6 +1,12 @@
+import { CSSProperties } from "react";
 import styled from "styled-components";
 import { mediaQuery } from "../utils/mediaQuery";
 import { SizeType, ThemeType } from "../types/stylesTypes";
+
+type FlexWrapperProps = Pick<
+  CSSProperties,
+  "flexWrap" | "alignItems" | "justifyContent" | "flexDirection" | "gap" | "flex"
+>;
 
 export const AppWrapper = styled.div(({ theme }) => ({
   backgroundColor: theme.backgroundColor,
@@ -43,8 +49,14 @@ export const darkTheme: ThemeType = {
   sizes: { ...sizes },
 };
 
-export const FlexWrapper = styled.div(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  gap: theme.sizes.xs,
-}));
+export const FlexWrapper = styled.div<FlexWrapperProps>(
+  ({ theme, flexWrap, alignItems = "center", justifyContent, flexDirection, gap, flex }) => ({
+    display: "flex",
+    alignItems,
+    gap: gap ?? theme.sizes.xs,
+    flexWrap,
+    justifyContent,
+    flexDirection,
+    flex,
+  })
+);

@@ -4,4 +4,5 @@ export type SwitchType = {
   insignia?: any;
   label?: string;
   labelVariant?: string;
+  labelPosition?: "right" | "left";
 };

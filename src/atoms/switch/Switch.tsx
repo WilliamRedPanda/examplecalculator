@@ -10,6 +10,7 @@ export const Switch: FC<SwitchType> = ({
   insignia = "",
   label,
   labelVariant = "",
+  labelPosition = "right",
 }) => {
   const [active, setActive] = useState(initialState);
   const handleClick = () => {
@@ -18,10 +19,13 @@ export const Switch: FC<SwitchType> = ({
   };
   return (
     <FlexWrapper>
-      {label && <Typography variant={labelVariant}>{<label htmlFor={label}>{label}</label>}</Typography>}
-      <StyledSwitch onClick={handleClick} id={label}>
+      {label && labelPosition === "right" && <Typography variant={labelVariant}>{<label htmlFor={label}>{label}</label>}</Typography>}
+      <StyledSwitch type="button" onClick={handleClick} id={label}
+        role="switch"
+        aria-checked={active}>
         <Insignia $active={active}>{insignia}</Insignia>
       </StyledSwitch>
+      {label && labelPosition === "left" && <Typography variant={labelVariant}>{<label htmlFor={label}>{label}</label>}</Typography>}
     </FlexWrapper>
   );
 };

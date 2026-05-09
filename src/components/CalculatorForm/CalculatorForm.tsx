@@ -1,67 +1,105 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
 import { Typography } from "../../atoms/typography";
 import { GenericInput } from "../../atoms/genericInput";
 import { FormActions, FormGrid, StyledForm } from "./styles";
 import { Button } from "../../atoms/button";
 import { Switch } from "../../atoms/switch";
 import { Dropdown } from "../../atoms/dropdown";
+import {
+  calculateMonthlyPayment,
+  getMortgageHistory,
+  MortgageResult,
+  saveMortgageResult,
+} from "../../utils/mortgageCalculator";
+import { FlexWrapper } from "../../styles/style";
+
+const durationOptions = [
+  { value: "10", label: "10 years" },
+  { value: "20", label: "20 years" },
+  { value: "30", label: "30 years" },
+  { value: "40", label: "40 years" },
+];
 
 export const CalculatorForm = () => {
+  const [amount, setAmount] = useState("");
+  const [interestRate, setInterestRate] = useState("");
+  const [years, setYears] = useState(durationOptions[0].value);
+  const [monthlyPayment, setMonthlyPayment] = useState<number | null>(null);
+  const [isFixedRate, setIsFixedRate] = useState(false);
+  const [history, setHistory] = useState<MortgageResult[]>(getMortgageHistory);
+
   const onsubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form submitted");
+    const params = {
+      loanAmount: parseFloat(amount),
+      annualInterestRate: parseFloat(interestRate),
+      years: parseInt(years),
+      rateType: isFixedRate ? "fixed" : "variable",
+    } as const;
+    const payment = calculateMonthlyPayment(params);
+    setMonthlyPayment(payment);
+    const result: MortgageResult = {
+      ...params,
+      monthlyPayment: parseFloat(payment.toFixed(2)),
+      calculatedAt: new Date().toISOString(),
+    };
+    setHistory(saveMortgageResult(result));
   };
-  const durationOption
-    = [
-        { value: "10", label: "10 years" },
-        { value: "20", label: "20 years" },
-        { value: "30", label: "30 years" },
-        { value: "40", label: "40 years" },
-      ]
-  ;
 
   return (
-    <StyledForm onSubmit={onsubmit}>
-      <Typography variant="h1">Calculator Form</Typography>
-      <FormGrid>
-        <GenericInput
-          label="Amount"
-          placeholder="Enter a value"
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            console.log(e.target.value)
-          }
-        />
-        {/* <GenericInput
-          type="number"
-          label="Installements"
-          placeholder="Enter a value"
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            console.log(e.target.value)
-          }
-        /> */}
-        <GenericInput
-          label="Interest rate"
-          placeholder="Enter a value"
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            console.log(e.target.value)
-          }
-        />
-        <Dropdown
-          label="Duration"
-          onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-            console.log(e.target.value)
-          }
-          options={durationOption}
-        />
-      </FormGrid>
-      <Switch
-        label="Rate type"
-        onClick={() => console.log("checked")}
-        initialState={false}
-      />
-      <FormActions>
-        <Button type="submit">Submit</Button>
-      </FormActions>
-    </StyledForm>
+    <>
+      <StyledForm onSubmit={onsubmit}>
+        <Typography variant="h1">Calculator Form</Typography>
+        <FormGrid>
+          <GenericInput
+            label="Amount"
+            type="number"
+            placeholder="Enter loan amount"
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setAmount(e.target.value)
+            }
+          />
+          <GenericInput
+            label="Interest rate"
+            type="number"
+            placeholder="Enter annual rate (%)"
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setInterestRate(e.target.value)
+            }
+          />
+          <Dropdown
+            label="Duration"
+            options={durationOptions}
+            onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+              setYears(e.target.value)
+            }
+          />
+          <FlexWrapper
+            flexWrap="wrap"
+          >
+            <Typography variant="h2"
+            >Rate type</Typography>
+            <Switch
+              label={isFixedRate ? "Fixed" : "Variable"}
+              onClick={() => {
+                setIsFixedRate((prev) => !prev);
+              }}
+              initialState={isFixedRate}
+              aria-checked={isFixedRate}
+              labelPosition="left"
+            />
+          </FlexWrapper>
+        </FormGrid>
+        <FormActions>
+          <Button type="submit">Submit</Button>
+        </FormActions>
+        {monthlyPayment !== null && (
+          <Typography variant="h2">
+            Estimated monthly payment: {monthlyPayment.toFixed(2)} €
+          </Typography>
+        )}
+      </StyledForm>
+      {history.length > 0 && <pre>{JSON.stringify(history, null, 2)}</pre>}
+    </>
   );
 };
