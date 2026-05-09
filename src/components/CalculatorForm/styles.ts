@@ -4,7 +4,8 @@ export const StyledForm = styled.form(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.sizes.m,
-  padding: theme.sizes.l,
+  padding: `${theme.sizes.l} 0`,
+  width: "100%",
   margin: "0 auto",
 }));
 

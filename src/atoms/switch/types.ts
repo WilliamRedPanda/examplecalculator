@@ -3,4 +3,5 @@ export type SwitchType = {
   initialState: boolean;
   insignia?: any;
   label?: string;
+  labelVariant?: string;
 };

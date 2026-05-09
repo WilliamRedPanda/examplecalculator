@@ -17,5 +17,7 @@ export const TopNavWrapper = styled.div(({ theme }: any) => ({
 export const HeaderStyled = styled.div(({ theme }: any) => ({
   display: "flex",
   alignItems: "center",
+  width: "100%",
+  justifyContent: "space-between",
   gap: theme.sizes.s,
 }));

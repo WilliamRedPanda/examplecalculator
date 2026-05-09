@@ -42,3 +42,9 @@ export const darkTheme: ThemeType = {
   textColor: "#fff",
   sizes: { ...sizes },
 };
+
+export const FlexWrapper = styled.div(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: theme.sizes.xs,
+}));
