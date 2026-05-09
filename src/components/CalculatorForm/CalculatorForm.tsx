@@ -12,6 +12,7 @@ import {
   saveMortgageResult,
 } from "../../utils/mortgageCalculator";
 import { FlexWrapper } from "../../styles/style";
+import { MortgageHistory } from "../MortgageHistory";
 
 const durationOptions = [
   { value: "10", label: "10 years" },
@@ -99,7 +100,7 @@ export const CalculatorForm = () => {
           </Typography>
         )}
       </StyledForm>
-      {history.length > 0 && <pre>{JSON.stringify(history, null, 2)}</pre>}
+      <MortgageHistory history={history} />
     </>
   );
 };
