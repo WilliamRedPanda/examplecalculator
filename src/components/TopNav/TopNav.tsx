@@ -11,7 +11,7 @@ export const TopNav = () => {
   };
 
   return (
-    <TopNavWrapper>
+    <TopNavWrapper role="banner">
       <HeaderStyled>
         <Typography>App</Typography>
         <Switch onClick={switchTheme} initialState={darkMode} label="Theme" insignia={<span>🌙</span>} />

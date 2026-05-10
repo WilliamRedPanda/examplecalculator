@@ -1,9 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { ThemeProvider } from "styled-components";
-import { Provider } from "react-redux";
 import { CalculatorForm } from "../components/CalculatorForm";
 import { lightTheme } from "../styles/style";
-import { store } from "../store";
 
 beforeEach(() => {
   localStorage.clear();
@@ -11,9 +9,7 @@ beforeEach(() => {
 
 const renderWithProviders = (ui: React.ReactElement) =>
   render(
-    <Provider store={store}>
       <ThemeProvider theme={lightTheme}>{ui}</ThemeProvider>
-    </Provider>
   );
 
 describe("CalculatorForm", () => {

@@ -1,8 +1,6 @@
 import { ThemeProvider } from "styled-components";
-import { Provider } from "react-redux";
 import useLocalStorage from "use-local-storage";
 import { Toaster } from "react-hot-toast";
-import { store } from "./store";
 import { AppContent, AppWrapper, darkTheme, lightTheme } from "./styles/style";
 import { TopNav } from "./components/TopNav";
 import { CalculatorForm } from "./components/CalculatorForm";
@@ -12,15 +10,13 @@ function App() {
 
   return (
     <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-      <Provider store={store}>
         <AppWrapper>
           <TopNav />
-          <AppContent>
+          <AppContent role="main">
             <CalculatorForm />
           </AppContent>
         </AppWrapper>
         <Toaster position="top-right" />
-      </Provider>
     </ThemeProvider>
   );
 }
