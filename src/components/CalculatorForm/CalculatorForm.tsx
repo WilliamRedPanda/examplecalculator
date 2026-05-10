@@ -21,11 +21,19 @@ const durationOptions = [
   { value: "40", label: "40 years" },
 ];
 
+const installmentOptions = [
+  { value: "1", label: "Annual (1/year)" },
+  { value: "2", label: "Semi-annual (2/year)" },
+  { value: "4", label: "Quarterly (4/year)" },
+  { value: "12", label: "Monthly (12/year)" },
+];
+
 export const CalculatorForm = () => {
   const [amount, setAmount] = useState("");
   const [interestRate, setInterestRate] = useState("");
   const [years, setYears] = useState(durationOptions[0].value);
-  const [monthlyPayment, setMonthlyPayment] = useState<number | null>(null);
+  const [installmentsPerYear, setInstallmentsPerYear] = useState(installmentOptions[3].value);
+  const [paymentAmount, setPaymentAmount] = useState<number | null>(null);
   const [isFixedRate, setIsFixedRate] = useState(false);
   const [history, setHistory] = useState<MortgageResult[]>(getMortgageHistory);
 
@@ -35,17 +43,24 @@ export const CalculatorForm = () => {
       loanAmount: parseFloat(amount),
       annualInterestRate: parseFloat(interestRate),
       years: parseInt(years),
+      installmentsPerYear: parseInt(installmentsPerYear),
       rateType: isFixedRate ? "fixed" : "variable",
     } as const;
     const payment = calculateMonthlyPayment(params);
-    setMonthlyPayment(payment);
+    setPaymentAmount(payment);
     const result: MortgageResult = {
       ...params,
-      monthlyPayment: parseFloat(payment.toFixed(2)),
+      paymentAmount: parseFloat(payment.toFixed(2)),
       calculatedAt: new Date().toISOString(),
     };
     setHistory(saveMortgageResult(result));
   };
+
+  const isFormValid = amount.trim() !== "" && interestRate.trim() !== "";
+
+  const selectedInstallmentLabel = installmentOptions.find(
+    (o) => o.value === installmentsPerYear
+  )?.label ?? "";
 
   return (
     <>
@@ -75,11 +90,16 @@ export const CalculatorForm = () => {
               setYears(e.target.value)
             }
           />
-          <FlexWrapper
-            flexWrap="wrap"
-          >
-            <Typography variant="h2"
-            >Rate type</Typography>
+          <Dropdown
+            label="Instalments per year"
+            options={installmentOptions}
+            value={installmentsPerYear}
+            onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+              setInstallmentsPerYear(e.target.value)
+            }
+          />
+          <FlexWrapper flexWrap="wrap">
+            <Typography variant="h2">Rate type</Typography>
             <Switch
               label={isFixedRate ? "Fixed" : "Variable"}
               onClick={() => {
@@ -92,11 +112,11 @@ export const CalculatorForm = () => {
           </FlexWrapper>
         </FormGrid>
         <FormActions>
-          <Button type="submit">Submit</Button>
+          <Button type="submit" disabled={!isFormValid}>Submit</Button>
         </FormActions>
-        {monthlyPayment !== null && (
+        {paymentAmount !== null && (
           <Typography variant="h2">
-            Estimated monthly payment: {monthlyPayment.toFixed(2)} €
+            Estimated payment ({selectedInstallmentLabel}): {paymentAmount.toFixed(2)} €
           </Typography>
         )}
       </StyledForm>

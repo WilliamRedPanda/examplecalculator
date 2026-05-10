@@ -22,23 +22,25 @@ describe("CalculatorForm", () => {
     expect(screen.getByLabelText("Amount")).toBeInTheDocument();
     expect(screen.getByLabelText("Interest rate")).toBeInTheDocument();
     expect(screen.getByLabelText("Duration")).toBeInTheDocument();
+    expect(screen.getByLabelText("Instalments per year")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /submit/i })).toBeInTheDocument();
   });
 
-  it("does not show monthly payment before submission", () => {
+  it("does not show payment result before submission", () => {
     renderWithProviders(<CalculatorForm />);
-    expect(screen.queryByText(/estimated monthly payment/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/estimated payment/i)).not.toBeInTheDocument();
   });
 
-  it("calculates and displays the monthly payment on submit", () => {
+  it("calculates and displays the payment on submit", () => {
     renderWithProviders(<CalculatorForm />);
 
     fireEvent.change(screen.getByLabelText("Amount"), { target: { value: "200000" } });
     fireEvent.change(screen.getByLabelText("Interest rate"), { target: { value: "5" } });
     fireEvent.change(screen.getByLabelText("Duration"), { target: { value: "30" } });
+    fireEvent.change(screen.getByLabelText("Instalments per year"), { target: { value: "12" } });
     fireEvent.click(screen.getByRole("button", { name: /submit/i }));
 
-    const result = screen.getByText(/estimated monthly payment/i);
+    const result = screen.getByText(/estimated payment/i);
     expect(result).toBeInTheDocument();
     expect(result.textContent).toMatch(/1073\./i);
   });
@@ -55,6 +57,7 @@ describe("CalculatorForm", () => {
     expect(history[0].loanAmount).toBe(150000);
     expect(history[0].annualInterestRate).toBe(4);
     expect(history[0].rateType).toBe("variable");
+    expect(history[0].installmentsPerYear).toBe(12);
   });
 
   it("accumulates multiple submissions in history", () => {

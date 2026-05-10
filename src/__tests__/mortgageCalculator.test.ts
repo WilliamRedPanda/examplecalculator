@@ -11,12 +11,13 @@ beforeEach(() => {
 
 describe("calculateMonthlyPayment", () => {
   it("calculates the correct monthly payment using the PMT formula", () => {
-    // $200k loan, 5% annual rate, 30 years → ~$1073.64
+    
     const result = calculateMonthlyPayment({
       loanAmount: 200000,
       annualInterestRate: 5,
       years: 30,
       rateType: "fixed",
+      installmentsPerYear: 12,
     });
     expect(result).toBeCloseTo(1073.64, 0);
   });
@@ -27,19 +28,39 @@ describe("calculateMonthlyPayment", () => {
       annualInterestRate: 0,
       years: 10,
       rateType: "variable",
+      installmentsPerYear: 12,
     });
     expect(result).toBeCloseTo(1000, 5);
   });
 
-  it("returns a higher monthly payment for shorter loan durations", () => {
-    const params = { loanAmount: 150000, annualInterestRate: 4, rateType: "fixed" as const };
+  it("calculates correct quarterly payment", () => {
+    
+    const result = calculateMonthlyPayment({
+      loanAmount: 120000,
+      annualInterestRate: 0,
+      years: 10,
+      rateType: "fixed",
+      installmentsPerYear: 4,
+    });
+    expect(result).toBeCloseTo(3000, 5);
+  });
+
+  it("returns a higher payment for fewer instalments per year", () => {
+    const params = { loanAmount: 150000, annualInterestRate: 4, years: 20, rateType: "fixed" as const };
+    const quarterly = calculateMonthlyPayment({ ...params, installmentsPerYear: 4 });
+    const monthly = calculateMonthlyPayment({ ...params, installmentsPerYear: 12 });
+    expect(quarterly).toBeGreaterThan(monthly);
+  });
+
+  it("returns a higher payment for shorter loan durations", () => {
+    const params = { loanAmount: 150000, annualInterestRate: 4, rateType: "fixed" as const, installmentsPerYear: 12 };
     const short = calculateMonthlyPayment({ ...params, years: 10 });
     const long = calculateMonthlyPayment({ ...params, years: 30 });
     expect(short).toBeGreaterThan(long);
   });
 
-  it("returns a higher monthly payment for higher interest rates", () => {
-    const params = { loanAmount: 150000, years: 20, rateType: "fixed" as const };
+  it("returns a higher payment for higher interest rates", () => {
+    const params = { loanAmount: 150000, years: 20, rateType: "fixed" as const, installmentsPerYear: 12 };
     const high = calculateMonthlyPayment({ ...params, annualInterestRate: 8 });
     const low = calculateMonthlyPayment({ ...params, annualInterestRate: 2 });
     expect(high).toBeGreaterThan(low);
@@ -57,7 +78,8 @@ describe("getMortgageHistory", () => {
       annualInterestRate: 3.5,
       years: 20,
       rateType: "fixed",
-      monthlyPayment: 579.96,
+      installmentsPerYear: 12,
+      paymentAmount: 579.96,
       calculatedAt: "2026-01-01T00:00:00.000Z",
     };
     localStorage.setItem("mortgage_history", JSON.stringify([entry]));
@@ -77,7 +99,8 @@ describe("saveMortgageResult", () => {
       annualInterestRate: 5,
       years: 30,
       rateType: "variable",
-      monthlyPayment: 1073.64,
+      installmentsPerYear: 12,
+      paymentAmount: 1073.64,
       calculatedAt: "2026-05-01T10:00:00.000Z",
     };
     const result = saveMortgageResult(entry);
@@ -91,7 +114,8 @@ describe("saveMortgageResult", () => {
       annualInterestRate: 3,
       years: 15,
       rateType: "fixed",
-      monthlyPayment: 691.0,
+      installmentsPerYear: 4,
+      paymentAmount: 691.0,
       calculatedAt: "2026-04-01T10:00:00.000Z",
     };
     const second: MortgageResult = {
@@ -99,7 +123,8 @@ describe("saveMortgageResult", () => {
       annualInterestRate: 5,
       years: 30,
       rateType: "variable",
-      monthlyPayment: 1073.64,
+      installmentsPerYear: 12,
+      paymentAmount: 1073.64,
       calculatedAt: "2026-05-01T10:00:00.000Z",
     };
     saveMortgageResult(first);
@@ -115,7 +140,8 @@ describe("saveMortgageResult", () => {
       annualInterestRate: 4,
       years: 20,
       rateType: "fixed",
-      monthlyPayment: 909.66,
+      installmentsPerYear: 12,
+      paymentAmount: 909.66,
       calculatedAt: "2026-05-09T12:00:00.000Z",
     };
     saveMortgageResult(entry);

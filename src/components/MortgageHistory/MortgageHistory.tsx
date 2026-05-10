@@ -28,7 +28,8 @@ export const MortgageHistory: FC<MortgageHistoryProps> = ({ history }) => {
               <TableHeader>Rate (%)</TableHeader>
               <TableHeader>Rate type</TableHeader>
               <TableHeader>Years</TableHeader>
-              <TableHeader>Monthly payment</TableHeader>
+              <TableHeader>Instalments/year</TableHeader>
+              <TableHeader>Payment amount</TableHeader>
             </tr>
           </TableHead>
           <tbody>
@@ -39,7 +40,8 @@ export const MortgageHistory: FC<MortgageHistoryProps> = ({ history }) => {
                 <TableCell>{entry.annualInterestRate}%</TableCell>
                 <TableCell>{entry.rateType}</TableCell>
                 <TableCell>{entry.years}</TableCell>
-                <TableCell>{entry.monthlyPayment.toFixed(2)} €</TableCell>
+                <TableCell>{entry.installmentsPerYear}</TableCell>
+                <TableCell>{entry.paymentAmount.toFixed(2)} €</TableCell>
               </TableRow>
             ))}
           </tbody>

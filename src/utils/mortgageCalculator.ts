@@ -5,10 +5,11 @@ export type MortgageParams = {
   annualInterestRate: number;
   years: number;
   rateType: RateType;
+  installmentsPerYear: number;
 };
 
 export type MortgageResult = MortgageParams & {
-  monthlyPayment: number;
+  paymentAmount: number;
   calculatedAt: string;
 };
 
@@ -16,10 +17,11 @@ export const calculateMonthlyPayment = ({
   loanAmount,
   annualInterestRate,
   years,
+  installmentsPerYear,
 }: MortgageParams): number => {
-  const n = years * 12;
+  const n = years * installmentsPerYear;
   if (annualInterestRate === 0) return loanAmount / n;
-  const r = annualInterestRate / 100 / 12;
+  const r = annualInterestRate / 100 / installmentsPerYear;
   return (loanAmount * (r * Math.pow(1 + r, n))) / (Math.pow(1 + r, n) - 1);
 };
 
